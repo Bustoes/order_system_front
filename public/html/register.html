@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <link rel="stylesheet" href="/public/stylesheet/login.css">
+</head>
+<body>
+
+<div id="app">
+    <div class="input-box">
+        <el-input v-model="user_name" placeholder="请输入姓名"></el-input>
+    </div>
+    <div class="input-box">
+        <el-input v-model="identity" placeholder="请输入身份"></el-input>
+    </div>
+    <div class="input-box">
+        <el-input v-model="account" placeholder="请输入账户"></el-input>
+    </div>
+    <div class="input-box">
+        <el-input v-model="password" placeholder="请输入密码"></el-input>
+    </div>
+    <div>
+        <el-row>
+            <el-button type="primary" v-on:click="login">登录</el-button>
+        </el-row>
+    </div>
+    <div>
+        <el-row>
+            <el-button v-on:click="u_register">注册</el-button>
+        </el-row>
+    </div>
+
+
+</div>
+
+
+
+<!-- 引入组件库 -->
+<script src="/component/vue.js"></script>
+<script src="/component/axios-0.18.0.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<!-- 引入js文件 -->
+<script type="module" src="/public/javascript/register.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>临时页面，没有分开写javascript</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+
+<div id="app">
+    <div>
+        <el-row>
+            <el-button type="primary" v-on:click="method1">主要按钮</el-button>
+        </el-row>
+    </div>
+</div>
+
+
+
+<!-- 引入组件库 -->
+<script src="/component/vue.js"></script>
+<script src="/component/axios-0.18.0.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<!-- 引入js文件 -->
+<script type="module">
+    import {axiosObj} from "/component/interceptor.js"
+    new Vue({
+        el: "#app",
+        data: function() {
+            return {
+
+            }
+        },
+        methods: {
+            method1() {
+                const _this = this
+                axiosObj({
+                    method: "get",
+                    url: "/",
+                }).then(function(result) {
+                    console.log(result)
+                }).catch(function(err) {
+
+                })
+
+            }
+        }
+    })
+</script>
+</body>
+</html>
