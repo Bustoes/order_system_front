@@ -7,7 +7,17 @@ new Vue({
             user_name: "",
             identity: "",
             account: "",
-            password: ""
+            password: "",
+            options: [{
+                value: 1,
+                label: "顾客"
+            }, {
+                value: 2,
+                label: "餐厅员工"
+            }, {
+                value: 3,
+                label: "送餐员"
+            }]
         }
     },
     methods: {
@@ -30,7 +40,6 @@ new Vue({
                     _this.$message.error(result.data.msg)
                 }
             }).catch(function(err) {
-
             })
         },
         login() {
