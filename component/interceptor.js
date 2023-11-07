@@ -1,5 +1,5 @@
 // 创建一个新的axios对象
-export const axiosObj = axios.create({
+const axiosObj = axios.create({
     baseURL: "http://localhost:9900",
     timeout: 30000
 })
@@ -11,7 +11,7 @@ axiosObj.interceptors.request.use(function(config) {
     config.headers["token"] = token;    // 设置请求头
     return config;
 }, function(error) {
-    console.log("request error in interceptor :" + error)
+    console.log("axiosObj error in interceptor :" + error)
     return Promise.reject(error)
 })
 
@@ -30,6 +30,8 @@ axiosObj.interceptors.response.use(function(response) {
 
     return response
 }, function(error) {
-    console.log("request error in interceptor :" + error)
+    console.log("axiosObj error in interceptor :" + error)
     return Promise.reject(error)
 })
+
+export default axiosObj

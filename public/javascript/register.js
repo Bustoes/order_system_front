@@ -1,4 +1,4 @@
-import {axiosObj} from "../../component/interceptor.js";
+import axiosObj from "../../component/interceptor.js";
 
 new Vue({
     el: "#app",
