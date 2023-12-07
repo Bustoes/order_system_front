@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>customer</title>
+    <style>
+      /* Flex 布局样式 */
+      .center-container {
+          display: flex;
+          justify-content: center;
+      }
+      .demo-table-expand {
+        font-size: 0;
+      }
+      .demo-table-expand label {
+        width: 90px;
+        color: #99a9bf;
+      }
+      .demo-table-expand .el-form-item {
+        margin-right: 0;
+        margin-bottom: 0;
+        width: 50%;
+      }
+</style>
+
+</head>
+<body>
+<div id="app">
+    <el-menu class="el-menu-demo" mode="horizontal">
+        <el-menu-item index="1" @click="show_menu">查看菜单</el-menu-item>
+        <el-menu-item index="2" @click="show_myorders">我的订单</el-menu-item>
+    </el-menu>
+
+    <el-table ref="menu_table" v-if="is_menu_table_visiable"
+    :data="menu_table_data" key = "menu_table_key"
+    stripe
+    style="width: 100%">
+    <el-table-column
+      prop="meal_name"
+      label="菜名"
+      width="180"
+    >
+    </el-table-column>
+    <el-table-column
+      prop="price"
+      label="价格"
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="imagine"
+      label="图片"
+      width="180">
+      <template slot-scope="scope">
+        <el-image
+          style="width: 100px; height: 100px;"
+          :src="scope.row.imagine"
+          fit="cover"
+        ></el-image>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="type"
+      label="类型"
+      width="100"
+      :filters="[{ text: '热菜', value: '热菜' }, { text: '凉菜', value: '凉菜' }]"
+      :filter-method="filterTag">
+      <template slot-scope="scope">
+        <el-tag
+          :type="scope.row.type === '热菜' ? 'primary' : 'success'"
+          disable-transitions>{{scope.row.type}}</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column
+    type="selection"
+    width="55">
+  </el-table-column>
+  </el-table>
+
+  <p v-if="is_menu_table_visiable">
+    <br>
+    <el-input v-model="destination" placeholder="请输入您的地址" style="width: 300px;"></el-input>
+    <br><br>
+    <el-button v-if="is_menu_table_visiable " type="primary" @click="make_order" round>生成订单</el-button>
+  </p>
+
+    <el-table ref="order_table"  key = "order_table_key"
+    v-if="is_order_table_visiable" 
+    :data="order_table_data"
+      style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="订单编号">
+              <span>{{ props.row.order_id }}</span>
+            </el-form-item>
+            <el-form-item label="订单状态">
+              <span>{{ props.row.status }}</span>
+            </el-form-item>
+            <el-form-item label="外卖员编号">
+              <span>{{ props.row.deliver_id }}</span>
+            </el-form-item>
+            <el-form-item label="订单总金额">
+              <span>{{ props.row.order_price }}</span>
+            </el-form-item>
+            <el-form-item label="订单评价">
+              <span>{{ props.row.order_comment }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="菜品名称"
+        prop="meals_name">
+      </el-table-column>
+      <el-table-column
+        label="送达时间"
+        prop="deliver_time">
+      </el-table-column>
+      <el-table-column
+        label="您的收货地址"
+        prop="destination">
+      </el-table-column>
+      
+      <el-table-column>
+      <template slot="header" slot-scope="scope">
+      </template>
+      <template slot-scope="scope">
+        <el-button
+        size="big"
+        type="primary"
+        @click="delete_order(scope.$index, scope.row)">添加或修改评论</el-button>
+        <el-button
+          size="big"
+          type="danger"
+          @click="delete_order(scope.$index, scope.row)">删除该订单(在未被接单时)</el-button>
+      </template>
+    </el-table-column>
+
+    </el-table>
+
+
+</div>
+
+
+
+<!-- 引入组件库 -->
+<script src="../../component/vue.js"></script>
+<script src="../../component/axios-0.18.0.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<!-- 引入顾客js文件 -->
+<script type="module" src="../javascript/customer.js"></script>
+</body>
+</html>
