@@ -5,6 +5,7 @@ new Vue({
         return {
             is_menu_table_visiable:false,
             is_order_table_visiable:false,
+            hasSelection: false,
             menu_table_data:[],
             order_table_data:[],
             destination:""
@@ -40,6 +41,12 @@ new Vue({
                 });
 
         },
+
+
+        handleSelectionChange(selection) {
+          // 判断是否选择了至少一项
+          this.hasSelection = selection.length > 0;
+        },
         make_order(){
             const selectedFoods = this.$refs.menu_table.selection;
             const orderData = {
@@ -58,7 +65,7 @@ new Vue({
                 .catch(error => {
                     console.error(error);
                     // 处理错误
-                    this.$message.error("出错了")
+                    this.$message({message :"出错了",type:"error"})
                 });
         },
 
@@ -73,9 +80,17 @@ new Vue({
                 const meals_name2 = order.menus.map((meal) => meal.meal_name).join(', ');
                 const dateObject = new Date(order.deliver_time);
                 const formattedDate = dateObject.toLocaleString();
+                const statusMapping = {
+                  1: "订单已创建(师傅正在炒菜)",
+                  2: "菜品已经出餐(正在等待配送)",
+                  3: "订单正在配送(外卖小哥取到餐了)",
+                  4: "订单已经送达(您还没有评论)",
+                  5: "订单已经送达且完成评论"
+                  // 添加其他映射项
+                };
                   return {
                     order_id: order.order_id,
-                    status: order.status,
+                    status: statusMapping[order.status],
                     deliver_id: order.deliver_id,
                     deliver_time: formattedDate,
                     destination: order.destination,
@@ -86,52 +101,64 @@ new Vue({
                 });
               })
               .catch((error) => {
-                this.$message.error(error.msg);
+                this.$message({message :"出错了",type:"error"})
                 console.error(error);
                 // 处理错误
               });
               this.is_order_table_visiable = true;
           },
-
         delete_order(row){
             const selected_order_id = row.order_id;
-            axios.delete('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/1',selected_order_id)
+            axios.delete('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/1{selected_order_id}')
             .then(response => {
               console.log("Order deleted successfully:", response.data);
+              this.$message({
+                type: 'success',
+                message: '删除成功' 
+              });
+            })
+            .then(() =>{
+              this.show_myorders();
             })
             .catch(error => {
               console.error("Error deleting order:", error);
-              this.$message.error("删除失败")
+              this.$message({message :"删除失败",type:"error"})
             });
         },
 
 
-        edit_comment(index,row){
+        edit_comment(row) {
           this.$prompt('请输入评论', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
           })
-          .then(({value}) =>{
-            const comment_data = {
-              "order_comment" : value,
-              "order_id" : row.order_id
-            };
-            axios.post('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/comment',comment_data)
-            .then(response => {
-              console.log("Order deleted successfully:", response.data);
-            })
-          })
           .then(({ value }) => {
-            this.$message({
-              type: 'success',
-              message: '您的评论是: ' + value
-            });
-          }).catch(() => {
-            this.$message.error("编辑失败");       
+            const comment_data = {
+              "order_comment": value,
+              "order_id": row.order_id
+            };
+        
+            console.log(comment_data);
+        
+            axios.post('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/comment', comment_data)
+              .then(response => {
+                console.log("订单评论成功：", response.data);
+        
+                // 将成功消息移到这里
+                this.$message({
+                  type: 'success',
+                  message: '您的评论是: ' + value
+                });
+              })
+              .catch(() => {
+                console.log(row.order_id);
+                this.$message({message :"编辑失败",type:"error"})    
+              });
           });
         },
-
         
+
+
         filterTag(value, row) {
             return row.type === value;
           },

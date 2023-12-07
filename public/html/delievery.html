@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delivery</title>
+    <style>
+        .demo-table-expand {
+          font-size: 0;
+        }
+        .demo-table-expand label {
+          width: 90px;
+          color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+          margin-right: 0;
+          margin-bottom: 0;
+          width: 50%;
+        }
+      </style>
+      
+</head>
+<body>
+    <div id="app">
+        <el-menu class="el-menu-demo" mode="horizontal">
+            <el-menu-item index="1" @click="show_sysorders">查看系统订单</el-menu-item>
+            <el-menu-item index="2" @click="show_myorders">查看我的订单</el-menu-item>
+        </el-menu>
+
+        <el-table ref="sysorders_table" v-if="is_sysorders_table_visiable"
+        :data="sysorders_table_data" key = "sysorders_table_key"
+        highlight-current-row
+        style="width: 100%">
+
+        <el-table-column
+          prop="order_id"
+          label="订单编号"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="deliver_time"
+          label="订单创建时间"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="destination"
+          label="送餐地址"
+          width="180">
+        </el-table-column>
+        <!-- 单选 -->
+        <el-table-column width="40">
+        <template slot-scope="scope">
+            <el-radio class="radio" :label="scope.row" v-model="radio" @change.native="getCurrentRow(scope.row)" >&nbsp;</el-radio>
+        </template>
+        </el-table-column>
+
+      </el-table>
+      
+      <p v-if="is_sysorders_table_visiable">
+        <el-button  type="primary" @click="accept_order" round :disabled="order_data.order_id===' '">接受该订单</el-button>
+      </p>
+
+      <el-table ref="myorders_table"  key = "myorders_table_key"
+      v-if="is_myorders_table_visiable" 
+      :data="myorders_table_data"
+        style="width: 100%">
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="外卖员编号">
+                <span>{{ props.row.deliver_id }}</span>
+              </el-form-item>
+              <el-form-item label="下单时间">
+                <span>{{ props.row.deliver_time }}</span>
+              </el-form-item>
+              <el-form-item label="订单总金额">
+                <span>{{ props.row.order_price }}</span>
+              </el-form-item>
+              <el-form-item label="订单评价">
+                <span>{{ props.row.order_comment }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="订单编号"
+          prop="order_id">
+        </el-table-column>
+        <el-table-column
+          label="订单状态"
+          prop="status">
+        </el-table-column>
+        <el-table-column
+          label="送达地址"
+          prop="destination">
+        </el-table-column>
+        
+        <el-table-column>
+        <template slot="header" slot-scope="scope">
+        </template>
+        <template slot-scope="scope">
+        <el-button
+            size="big"
+            type="primary"
+            @click="commit_delivery(scope.row) " :disabled="scope.row.status==='订单已经送达且完成评论'">确认送达</el-button>
+        </template>
+      </el-table-column>
+  
+      </el-table>
+    </div>
+
+
+
+
+
+<script src="../../component/vue.js"></script>
+<script src="../../component/axios-0.18.0.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<!-- 引入外卖员js文件 -->
+<script type="module" src="../javascript/delievery.js"></script>
+</body>
+</html>

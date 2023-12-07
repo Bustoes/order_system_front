@@ -35,7 +35,8 @@
     <el-table ref="menu_table" v-if="is_menu_table_visiable"
     :data="menu_table_data" key = "menu_table_key"
     stripe
-    style="width: 100%">
+    style="width: 100%"
+    @selection-change="handleSelectionChange">
     <el-table-column
       prop="meal_name"
       label="菜名"
@@ -81,7 +82,7 @@
     <br>
     <el-input v-model="destination" placeholder="请输入您的地址" style="width: 300px;"></el-input>
     <br><br>
-    <el-button v-if="is_menu_table_visiable " type="primary" @click="make_order" round>生成订单</el-button>
+    <el-button v-if="is_menu_table_visiable " type="primary" @click="make_order" round :disabled = "!(destination&&hasSelection)" >生成订单</el-button>
   </p>
 
     <el-table ref="order_table"  key = "order_table_key"
@@ -114,7 +115,7 @@
         prop="meals_name">
       </el-table-column>
       <el-table-column
-        label="送达时间"
+        label="订单创建时间"
         prop="deliver_time">
       </el-table-column>
       <el-table-column
@@ -129,11 +130,11 @@
         <el-button
         size="big"
         type="primary" 
-        @click="edit_comment(scope.row)">添加或修改评论</el-button>
+        @click="edit_comment(scope.row)" :disabled="scope.row.status==='订单已创建(师傅正在炒菜)'||scope.row.status==='菜品已经出餐(正在等待配送)'||scope.row.status==='订单正在配送(外卖小哥取到餐了)'">添加或修改评论</el-button>
         <el-button
           size="big"
           type="danger"
-          @click="delete_order(scope.$index, scope.row)">删除该订单(在未被接单时)</el-button>
+          @click="delete_order(scope.$index, scope.row)" :disabled="scope.row.status!=='订单已创建(师傅正在炒菜)'">删除该订单(在未被接单时)</el-button>
       </template>
     </el-table-column>
 
