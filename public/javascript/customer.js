@@ -34,7 +34,7 @@ new Vue({
                 this.is_menu_table_visiable = true;
             })
             .catch(error => {
-                alert(error.msg);
+                this.$message.error(error.msg);
                 console.error(error);
                 // 处理错误
                 });
@@ -43,23 +43,23 @@ new Vue({
         make_order(){
             const selectedFoods = this.$refs.menu_table.selection;
             const orderData = {
-                address: this.destination,
-                foods: selectedFoods.map(food => ({
+                "destination": this.destination,
+                "meals": selectedFoods.map(food => ({
                     meal_name: food.meal_name,
                 })),
             };
             console.log(orderData);
-            alert("外卖订单已成功提交")
-            // 发送订单数据到后端
-            // axios.post("http://your-backend-url/create_order", orderData)
-            //     .then(response => {
-            //         // 处理后端响应
-            //         console.log(response.data);
-            //     })
-            //     .catch(error => {
-            //         console.error(error);
-            //         // 处理错误
-            //     });
+            axios.post("http://127.0.0.1:4523/m1/3485186-0-default/customer/order", orderData)
+                .then(response => {
+                    // 处理后端响应
+                    console.log(response.data);
+                    this.$message({message:"外卖订单已成功提交",type : 'success'})
+                })
+                .catch(error => {
+                    console.error(error);
+                    // 处理错误
+                    this.$message.error("出错了")
+                });
         },
 
         show_myorders() {
@@ -86,23 +86,52 @@ new Vue({
                 });
               })
               .catch((error) => {
-                alert(error.msg);
+                this.$message.error(error.msg);
                 console.error(error);
                 // 处理错误
               });
               this.is_order_table_visiable = true;
           },
 
-        delete_order(index, row){
+        delete_order(row){
             const selected_order_id = row.order_id;
-            axios.delete('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/1')
+            axios.delete('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/1',selected_order_id)
             .then(response => {
               console.log("Order deleted successfully:", response.data);
             })
             .catch(error => {
               console.error("Error deleting order:", error);
+              this.$message.error("删除失败")
             });
         },
+
+
+        edit_comment(index,row){
+          this.$prompt('请输入评论', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          })
+          .then(({value}) =>{
+            const comment_data = {
+              "order_comment" : value,
+              "order_id" : row.order_id
+            };
+            axios.post('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/comment',comment_data)
+            .then(response => {
+              console.log("Order deleted successfully:", response.data);
+            })
+          })
+          .then(({ value }) => {
+            this.$message({
+              type: 'success',
+              message: '您的评论是: ' + value
+            });
+          }).catch(() => {
+            this.$message.error("编辑失败");       
+          });
+        },
+
+        
         filterTag(value, row) {
             return row.type === value;
           },

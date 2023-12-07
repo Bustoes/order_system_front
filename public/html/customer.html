@@ -128,8 +128,8 @@
       <template slot-scope="scope">
         <el-button
         size="big"
-        type="primary"
-        @click="delete_order(scope.$index, scope.row)">添加或修改评论</el-button>
+        type="primary" 
+        @click="edit_comment(scope.row)">添加或修改评论</el-button>
         <el-button
           size="big"
           type="danger"
