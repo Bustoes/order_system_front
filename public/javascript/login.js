@@ -25,6 +25,8 @@ new Vue({
                     console.log(result.data.data.token)
                     setTimeout(function() {
                         // 在三秒后执行页面跳转
+                        // 根据identity执行跳转
+                        result.data.data.identity
                         window.location.assign("/user/demo")
                     }, 1000);
                 } else {
