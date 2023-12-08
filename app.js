@@ -3,7 +3,7 @@ const path = require('path');
 const port = "3000";
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/customer');
+const usersRouter = require('./routes/user');
 
 const app = express();
 

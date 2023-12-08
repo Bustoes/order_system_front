@@ -1,3 +1,5 @@
+import axiosObj from "../../component/interceptor.js";
+
 new Vue({
     el:"#app",
     data(){
@@ -18,7 +20,7 @@ new Vue({
         show_sysorders(){
             this.close_alltable();
             this.is_sysorders_table_visiable = true;
-            axios.get("http://127.0.0.1:4523/m1/3485186-0-default/delivery/order")
+            axiosObj.get("http://localhost:9900/delivery/order")
             .then(response =>{
                 const data = response.data.data;
                 console.log(data);
@@ -49,7 +51,7 @@ new Vue({
             console.log(this.order_data);
             const order_id = this.order_data.order_id;
             console.log(order_id);
-            axios.post("http://127.0.0.1:4523/m1/3485186-0-default/delivery/order/{order_id}")
+            axiosObj.post("http://localhost:9900/delivery/order/"+order_id)
             .then(response =>{
                 const data = response.data.msg;
                 console.log(data);
@@ -64,7 +66,7 @@ new Vue({
         show_myorders(){
             this.close_alltable();
             this.is_myorders_table_visiable = true;
-            axios.get("http://127.0.0.1:4523/m1/3485186-0-default/delivery/myorder")
+            axiosObj.get("http://localhost:9900/delivery/myorder")
             .then(response => {
                 const myorder_data = response.data.data;
                 console.log(myorder_data);
@@ -98,7 +100,7 @@ new Vue({
         commit_delivery(row){
             const order_id = row.order_id;
             console.log(order_id);
-            axios.post("http://127.0.0.1:4523/m1/3485186-0-default/delivery/delivery/{order_id}")
+            axiosObj.post("http://localhost:9900/delivery/delivery/" + order_id)
             .then(response =>{
                 const data = response.data.msg;
                 console.log(data);

@@ -18,10 +18,10 @@ new Vue({
         },
         show_menu(){
             this.close_all_table();
-            axios.get("http://127.0.0.1:4523/m1/3485186-0-default/customer/menu")
+            axiosObj.get("http://localhost:9900/customer/menu")
             .then(response=>{
                 const menu_data = response.data.data;
-                console.log(menu_data);
+                console.log(response.data);
                 this.menu_table_data = menu_data.map(menu => {
                     return {
                         meal_id: menu.meal_id,
@@ -51,12 +51,12 @@ new Vue({
             const selectedFoods = this.$refs.menu_table.selection;
             const orderData = {
                 "destination": this.destination,
-                "meals": selectedFoods.map(food => ({
-                    meal_name: food.meal_name,
-                })),
+                "meals": selectedFoods.map(food => {
+                    return food.meal_id;
+                }),
             };
             console.log(orderData);
-            axios.post("http://127.0.0.1:4523/m1/3485186-0-default/customer/order", orderData)
+            axiosObj.post("http://localhost:9900/customer/order", orderData)
                 .then(response => {
                     // 处理后端响应
                     console.log(response.data);
@@ -71,32 +71,32 @@ new Vue({
 
         show_myorders() {
             this.close_all_table();
-            axios
-              .get("http://127.0.0.1:4523/m1/3485186-0-default/customer/order")
+            axiosObj
+              .get("http://localhost:9900/customer/order")
               .then((response) => {
                 const order_data = response.data.data;
                 console.log(order_data);
                 this.order_table_data = order_data.map((order) => {
-                const meals_name2 = order.menus.map((meal) => meal.meal_name).join(', ');
-                const dateObject = new Date(order.deliver_time);
-                const formattedDate = dateObject.toLocaleString();
-                const statusMapping = {
-                  1: "订单已创建(师傅正在炒菜)",
-                  2: "菜品已经出餐(正在等待配送)",
-                  3: "订单正在配送(外卖小哥取到餐了)",
-                  4: "订单已经送达(您还没有评论)",
-                  5: "订单已经送达且完成评论"
-                  // 添加其他映射项
-                };
-                  return {
-                    order_id: order.order_id,
-                    status: statusMapping[order.status],
-                    deliver_id: order.deliver_id,
-                    deliver_time: formattedDate,
-                    destination: order.destination,
-                    order_price: order.order_price,
-                    order_comment: order.comment,
-                    meals_name: meals_name2,
+                    const meals_name2 = order.menus.map((meal) => meal.meal_name).join(', ');
+                    const dateObject = new Date(order.deliver_time);
+                    const formattedDate = dateObject.toLocaleString();
+                    const statusMapping = {
+                      1: "订单已创建(师傅正在炒菜)",
+                      2: "菜品已经出餐(正在等待配送)",
+                      3: "订单正在配送(外卖小哥取到餐了)",
+                      4: "订单已经送达(您还没有评论)",
+                      5: "订单已经送达且完成评论"
+                      // 添加其他映射项
+                    };
+                      return {
+                        order_id: order.order_id,
+                        status: statusMapping[order.status],
+                        deliver_id: order.deliver_id,
+                        deliver_time: formattedDate,
+                        destination: order.destination,
+                        order_price: order.order_price,
+                        order_comment: order.order_comment,
+                        meals_name: meals_name2,
                   };
                 });
               })
@@ -109,7 +109,7 @@ new Vue({
           },
         delete_order(row){
             const selected_order_id = row.order_id;
-            axios.delete('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/1{selected_order_id}')
+            axiosObj.delete('http://localhost:9900/customer/order/{selected_order_id}')
             .then(response => {
               console.log("Order deleted successfully:", response.data);
               this.$message({
@@ -140,7 +140,7 @@ new Vue({
         
             console.log(comment_data);
         
-            axios.post('http://127.0.0.1:4523/m1/3485186-0-default/customer/order/comment', comment_data)
+            axiosObj.post('http://localhost:9900/customer/order/comment', comment_data)
               .then(response => {
                 console.log("订单评论成功：", response.data);
         
