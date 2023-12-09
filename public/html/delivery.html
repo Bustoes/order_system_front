@@ -103,7 +103,7 @@
         <el-button
             size="big"
             type="primary"
-            @click="commit_delivery(scope.row) " :disabled="scope.row.status==='订单已经送达且完成评论'">确认送达</el-button>
+            @click="commit_delivery(scope.row) " :disabled="scope.row.status==='订单已经送达且完成评论'&&scope.row.status==='订单已经送达(您还没有评论)'">确认送达</el-button>
         </template>
       </el-table-column>
   

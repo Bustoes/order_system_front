@@ -22,6 +22,7 @@ new Vue({
             this.is_sysorders_table_visiable = true;
             axiosObj.get("http://localhost:9900/delivery/order")
             .then(response =>{
+                if(response.data.code===1000){
                 const data = response.data.data;
                 console.log(data);
                 this.sysorders_table_data = data.map(order => {
@@ -33,6 +34,12 @@ new Vue({
                         destination: order.destination,
                     };
                 });
+            }
+                else if(response.data.code===5000){
+                    this.$message({message :"出错了",type:"error"})
+                    console.error(error);
+                    // 处理错误
+                }
             })
             .catch(error => {
                 this.$message({message :"出错了",type:"error"})
@@ -53,9 +60,15 @@ new Vue({
             console.log(order_id);
             axiosObj.post("http://localhost:9900/delivery/order/"+order_id)
             .then(response =>{
+            if(response.data.code===1000){
                 const data = response.data.msg;
                 console.log(data);
                 this.$message({message:"成功接单",type:"success"})
+            }
+            else if(response.data.code===5000){
+                console.log(error)
+                this.$message({message :"出错了",type:"error"})
+            }
             })
             .catch(error=>{
                 console.log(error)
@@ -68,6 +81,7 @@ new Vue({
             this.is_myorders_table_visiable = true;
             axiosObj.get("http://localhost:9900/delivery/myorder")
             .then(response => {
+            if(response.data.code===1000){                
                 const myorder_data = response.data.data;
                 console.log(myorder_data);
                 this.myorders_table_data = myorder_data.map(order =>{
@@ -91,6 +105,11 @@ new Vue({
                         destination:order.destination
                     }
                 })
+            }
+            else if(response.data.code===5000){
+                console.log(error);
+                this.$message({message :"出错了",type:"error"})
+            }
             })
             .catch(error =>{
                 console.log(error);
@@ -102,9 +121,15 @@ new Vue({
             console.log(order_id);
             axiosObj.post("http://localhost:9900/delivery/delivery/" + order_id)
             .then(response =>{
+                if(response.data.code===1000){
                 const data = response.data.msg;
                 console.log(data);
                 this.$message({message:"成功送达",type:"success"})
+                }
+                else if(response.data.code===5000){
+                    console.log(error)
+                    this.$message({message :"出错了",type:"error"})
+                }
             })
             .catch(error=>{
                 console.log(error)

@@ -20,6 +20,8 @@ new Vue({
             this.close_all_table();
             axiosObj.get("http://localhost:9900/customer/menu")
             .then(response=>{
+              if(response.data.code===1000)
+              {
                 const menu_data = response.data.data;
                 console.log(response.data);
                 this.menu_table_data = menu_data.map(menu => {
@@ -33,6 +35,11 @@ new Vue({
                     };
                 });
                 this.is_menu_table_visiable = true;
+              }
+              else if(response.data.code===5000){
+                console.log(response.data.msg)
+                this.$message({message:"出错了",type:"error"})
+              }
             })
             .catch(error => {
                 this.$message.error(error.msg);
@@ -59,8 +66,15 @@ new Vue({
             axiosObj.post("http://localhost:9900/customer/order", orderData)
                 .then(response => {
                     // 处理后端响应
+                    if(response.data.code===1000){
                     console.log(response.data);
                     this.$message({message:"外卖订单已成功提交",type : 'success'})
+                    }
+                    else if(response.data.code===5000){
+                      console.error(error);
+                      // 处理错误
+                      this.$message({message :"出错了",type:"error"})
+                    }
                 })
                 .catch(error => {
                     console.error(error);
@@ -74,6 +88,7 @@ new Vue({
             axiosObj
               .get("http://localhost:9900/customer/order")
               .then((response) => {
+                if(response.data.code===1000){
                 const order_data = response.data.data;
                 console.log(order_data);
                 this.order_table_data = order_data.map((order) => {
@@ -99,6 +114,12 @@ new Vue({
                         meals_name: meals_name2,
                   };
                 });
+              }
+              else if(response.data.code===5000){
+                this.$message({message :"出错了",type:"error"})
+                console.error(error);
+                // 处理错误
+              }
               })
               .catch((error) => {
                 this.$message({message :"出错了",type:"error"})
@@ -111,11 +132,17 @@ new Vue({
             const selected_order_id = row.order_id;
             axiosObj.delete('http://localhost:9900/customer/order/{selected_order_id}')
             .then(response => {
+              if(response.data.code===1000){
               console.log("Order deleted successfully:", response.data);
               this.$message({
                 type: 'success',
                 message: '删除成功' 
               });
+            }
+              else if(response.data.code===5000){
+              console.error("Error deleting order:", error);
+              this.$message({message :"删除失败",type:"error"})
+              }
             })
             .then(() =>{
               this.show_myorders();
@@ -142,6 +169,7 @@ new Vue({
         
             axiosObj.post('http://localhost:9900/customer/order/comment', comment_data)
               .then(response => {
+                if(response.data.code===1000){
                 console.log("订单评论成功：", response.data);
         
                 // 将成功消息移到这里
@@ -149,6 +177,11 @@ new Vue({
                   type: 'success',
                   message: '您的评论是: ' + value
                 });
+              }
+              else if(response.data.code===5000){
+                console.log(row.order_id);
+                this.$message({message :"编辑失败",type:"error"})
+              }
               })
               .catch(() => {
                 console.log(row.order_id);
