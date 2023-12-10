@@ -24,10 +24,16 @@ new Vue({
                     localStorage.setItem("token", JSON.stringify(result.data.data.token))
                     console.log(result.data.data.token)
                     setTimeout(function() {
-                        // 在三秒后执行页面跳转
+                        // 在一秒后执行页面跳转
                         // 根据identity执行跳转
-                        result.data.data.identity
-                        window.location.assign("/user/demo")
+                        let identity = result.data.data.identity
+                        if (identity === 1) {
+                            window.location.assign("/user/customer")
+                        } else if (identity === 2) {
+                            window.location.assign("/user/staff_")
+                        } else if (identity === 3) {
+                            window.location.assign("/user/delivery")
+                        }
                     }, 1000);
                 } else {
                     _this.$message.error(result.data.msg)

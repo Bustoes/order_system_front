@@ -130,11 +130,11 @@
         <el-button
         size="big"
         type="primary" 
-        @click="edit_comment(scope.row)" :disabled="scope.row.status==='订单已创建(师傅正在炒菜)'||scope.row.status==='菜品已经出餐(正在等待配送)'||scope.row.status==='订单正在配送(外卖小哥取到餐了)'">添加或修改评论</el-button>
+        @click="edit_comment(scope.row)" :disabled="scope.row.status==='订单已创建(师傅正在炒菜)'||scope.row.status==='菜品已经出餐(正在等待配送)'||scope.row.status==='订单正在配送(外卖小哥取到餐了)'">添加/修改评论</el-button>
         <el-button
           size="big"
           type="danger"
-          @click="delete_order(scope.$index, scope.row)" :disabled="scope.row.status!=='订单已创建(师傅正在炒菜)'">删除该订单(在未被接单时)</el-button>
+          @click="delete_order(scope.row)" :disabled="scope.row.status!=='订单已创建(师傅正在炒菜)'">删除订单</el-button>
       </template>
     </el-table-column>
 
