@@ -158,7 +158,7 @@ new Vue({
                 .then(response => {
                     if (response.data.code === 1000) {
 
-                        this.$message.error("订单接受成功")
+                        this.$message.success("订单接受成功")
 
                         // 如果需要更新订单状态，可以调用 fetchOrders 方法刷新订单列表
                         this.fetchOrders();
