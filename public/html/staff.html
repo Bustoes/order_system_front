@@ -2,111 +2,162 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>staff</title>
-
-    <!-- 引入样式 -->
+    <style></style>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="/public/stylesheet/staff.css">
+
 </head>
 <body>
+    <div id="app">
+        <el-menu class="el-menu-demo" mode="horizontal">
+            <el-menu-item index="1" @click="fetchMenu">查看菜单</el-menu-item>
+            <el-menu-item index="2" @click="fetchSales">查看销售情况</el-menu-item>
+            <el-menu-item index="3" @click="fetchOrders">查看订单</el-menu-item>
+        </el-menu>
 
-<div id="app">
-    <!-- 模板html，写新html直接复制 -->
-    <!-- 写之前观看vue教程 -->
-    <h1>餐厅员工管理系统</h1>
+        <p v-if="is_menu_table_visiable">
+            <br>
+            <el-input v-model="newDish.name" placeholder="请输入菜名" style="width: 300px;"></el-input>
+            <br>
+            <template>
+                <el-select v-model="newDish.type" placeholder="请选择类型">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </template>
+            <br>
+            <el-input v-model="newDish.price" placeholder="请输入价格" style="width: 300px;"></el-input>
+            <br>
+            <el-input v-model="newDish.image" placeholder="请输入图片url" style="width: 300px;"></el-input>
+            <br><br>
+            <el-button type="primary" @click="addDish()" >新建菜品</el-button>
+        </p>
 
-    <!-- 1. 管理菜单 -->
-    <h2>管理菜单</h2>
-    <form @submit.prevent="addDish">
-        <label for="dishName">菜名：</label>
-        <input v-model="newDish.name" required id="dishName">
-        <label for="dishPrice">价格：</label>
-        <input v-model="newDish.price" type="number" required id="dishPrice">
-        <label for="dishType">类型：</label>
-        <input v-model="newDish.type" required id="dishType">
-        <label for="dishImage">图片 URL：</label>
-        <input v-model="newDish.image" required id="dishImage">
-        <button type="submit">添加菜品</button>
-    </form>
 
-    <!-- 3. 菜单列表 -->
-    <h3>菜单列表</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>编号</th>
-            <th>菜名</th>
-            <th>价格</th>
-            <th>类型</th>
-            <th>图片</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(dish, index) in menu" :key="index">
-            <td>{{ dish.meal_id }}</td>
-            <td>{{ dish.meal_name }}</td>
-            <td>{{ dish.meal_price }}</td>
-            <td>{{ dish.type }}</td>
-            <td><img :src="dish.image_path" :alt="dish.meal_name"></td>
-            <td>
-                <button @click="editDish(index)"><i class="fas fa-edit"></i> 编辑</button>
-                <button @click="deleteDish(index)"><i class="fas fa-trash-alt"></i> 删除</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <el-table v-if="is_menu_table_visiable"
+        :data="menu" key = "orders_table_key"
+        highlight-current-row
+        style="width: 100%">
 
-    <!-- 添加销售情况显示区域 -->
-    <h3>销售情况</h3>
-    <ul>
-        <li v-for="(sale, saleIndex) in sales" :key="saleIndex">
-            {{ sale.meal_name }} - 销售数量: {{ sale.num_order }}
-        </li>
-    </ul>
-
-    <h3>订单列表</h3>
-    <table>
-        <thead>
-        <tr>
-            <th>订单号</th>
-            <th>状态</th>
-            <th>配送地址</th>
-            <th>配送员</th>
-            <th>订单金额</th>
-            <th>评论</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(order, orderIndex) in orders" :key="orderIndex">
-            <td>{{ order.order_id }}</td>
-            <td>{{ order.status }}</td>
-            <td>{{ order.destination }}</td>
-            <td>{{ order.delivery_name }}</td>
-            <td>{{ order.order_price }}</td>
-            <td>{{ order.order_comment }}</td>
-            <td>
-<!--                一添加就无法运转-->
-<!--                <button :disabled="scope.row.status===2 || scope.row.status===3 || scope.row.status===4 || scope.row.status===5" @click="acceptOrder(order.order_id)"><i class="fas fa-check"></i> 接受订单</button>-->
-                <button @click="acceptOrder(order.order_id)"><i class="fas fa-check"></i> 接受订单</button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-</div>
+        <el-table-column
+          prop="meal_id"
+          label="id"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="meal_name"
+          label="菜名">
+        </el-table-column>
+        <el-table-column
+          prop="meal_price"
+          label="价格">
+        </el-table-column>
+        <el-table-column
+          prop="type"
+          label="类型">
+        </el-table-column>
+        <el-table-column
+          prop="image"
+          label="图片">
+            <template slot-scope="scope">
+                <el-image
+                        style="width: 100px; height: 100px;"
+                        :src="scope.row.image_path"
+                        fit="cover"
+                ></el-image>
+            </template>
+        </el-table-column>
+        <el-table-column>
+            <template slot="header" slot-scope="scope">
+            </template>
+            <template slot-scope="scope">
+                <el-button
+                        size="big"
+                        type="primary"
+                        @click="editDish(scope.row)">改价</el-button>
+                <el-button
+                        size="big"
+                        type="danger"
+                        @click="deleteDish(scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+        </el-table>
 
 
 
-<!-- 引入组件库 -->
+      <el-table  key = "sale_key"
+      v-if="is_sale_table_visiable"
+      :data="sales"
+        style="width: 100%">
+        <el-table-column
+          label="菜名"
+          prop="meal_name">
+        </el-table-column>
+        <el-table-column
+          label="售出数量"
+          prop="num_order">
+        </el-table-column>
+      </el-table>
+
+        <el-table v-if="is_order_table_visiable"
+                  :data="orders" key = "orders_table_key"
+                  highlight-current-row
+                  style="width: 100%">
+
+            <el-table-column
+                    prop="order_id"
+                    label="订单id"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="status"
+                    label="状态">
+            </el-table-column>
+            <el-table-column
+                    prop="destination"
+                    label="配送地址">
+            </el-table-column>
+            <el-table-column
+                    prop="delivery_name"
+                    label="配送员">
+            </el-table-column>
+            <el-table-column
+                    prop="order_price"
+                    label="订单金额">
+            </el-table-column>
+            <el-table-column
+                    prop="order_comment"
+                    label="评价">
+            </el-table-column>
+            <el-table-column>
+                <template slot="header" slot-scope="scope">
+                </template>
+                <template slot-scope="scope">
+                    <el-button
+                            size="big"
+                            type="primary"
+                            @click="acceptOrder(scope.row)"
+                            :disabled="scope.row.status===2||scope.row.status===3||scope.row.status===4||scope.row.status===5"
+                            >接受订单</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+
+
+
+
+
 <script src="/component/vue.js"></script>
 <script src="/component/axios-0.18.0.js"></script>
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<!-- 引入js文件 -->
-<script type="module" src="/public/javascript/staff.js"></script>
-<script>
 
-</script>
+<!-- 引入外卖员js文件 -->
+<script type="module" src="/public/javascript/staff.js"></script>
 </body>
 </html>

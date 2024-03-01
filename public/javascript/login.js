@@ -30,7 +30,7 @@ new Vue({
                         if (identity === 1) {
                             window.location.assign("/user/customer")
                         } else if (identity === 2) {
-                            window.location.assign("/user/staff_")
+                            window.location.assign("/user/staff")
                         } else if (identity === 3) {
                             window.location.assign("/user/delivery")
                         }

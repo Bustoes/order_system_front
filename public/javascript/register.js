@@ -35,7 +35,9 @@ new Vue({
             }).then(function(result) {
                 if (result.data.code === 1000) {
                     _this.$message.success("注册成功")
-                    window.location.assign("/login")
+                    setTimeout(function() {
+                        window.location.assign("/login")
+                    }, 1000);
                 } else {
                     _this.$message.error(result.data.msg)
                 }

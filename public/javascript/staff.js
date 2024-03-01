@@ -2,19 +2,40 @@ import axiosObj from "../../component/interceptor.js";
 new Vue({
     el: '#app',
     data: {
+        is_menu_table_visiable: false,
+        is_sale_table_visiable: false,
+        is_order_table_visiable: false,
+
         newDish: { name: '', price: '', image: '', type: '' },
         menu: [],
         sales: [],
-        orders: []
-    },
-
-    created: function () {
-        this.fetchMenu();
-        this.fetchSales();
-        this.fetchOrders();
+        orders: [],
+        options: [{
+            value: '凉菜',
+            label: '凉菜'
+        }, {
+            value: '热菜',
+            label: '热菜'
+        }, {
+            value: '主食',
+            label: '主食'
+        }, {
+            value: '饮料',
+            label: '饮料'
+        }, {
+            value: '小吃',
+            label: '小吃'
+        }],
     },
     methods: {
+        close_all_table() {
+            this.is_menu_table_visiable = false;
+            this.is_sale_table_visiable = false;
+            this.is_order_table_visiable = false;
+        },
         fetchMenu: function () {
+            this.close_all_table();
+            this.is_menu_table_visiable = true
             axiosObj.get('http://localhost:9900/staff/menu')
                 .then(response => {
                     if (response.data.code === 1000) {
@@ -56,11 +77,9 @@ new Vue({
                     alert('Failed to add dish: ' + error.message);
                 });
         },
-        deleteDish: function (index) {
-            const dishIdToDelete = this.menu[index].meal_id;
-
+        deleteDish: function (row) {
             // 发送请求以删除菜品
-            axiosObj.post('http://localhost:9900/staff/menu/delete', {meal_id: dishIdToDelete})
+            axiosObj.post('http://localhost:9900/staff/menu/delete', {meal_id: row.meal_id})
                 .then(response => {
                     if (response.data.code === 1000) {
                         // 如果请求成功，从菜单中移除被删除的菜品
@@ -74,11 +93,9 @@ new Vue({
                     alert('删除菜品失败: ' + error.message);
                 });
         },
-        editDish: function (index) {
-            const dishToEdit = { ...this.menu[index] };
-
+        editDish: function (row) {
             // 弹出输入框，允许用户输入新的价格
-            const newPrice = prompt('请输入新的价格', dishToEdit.meal_price);
+            const newPrice = prompt('请输入新的价格', row.meal_price);
 
             // 如果用户点击取消或没有输入新的价格，不进行任何操作
             if (newPrice === null || newPrice.trim() === '') {
@@ -87,14 +104,14 @@ new Vue({
 
             // 发送 POST 请求以更新菜品价格
             axiosObj.post('http://localhost:9900/staff/menu/update', {
-                meal_id: dishToEdit.meal_id,
+                meal_id: row.meal_id,
                 new_price: parseFloat(newPrice)
             })
                 .then(response => {
                     if (response.data.code === 1000) {
                         // 如果请求成功，更新本地的菜单价格
-                        this.menu[index].meal_price = parseFloat(newPrice);
                         this.$message.success("更改成功")
+                        this.fetchMenu()
                     } else {
                         this.$message.error(response.data.msg)
                     }
@@ -104,6 +121,8 @@ new Vue({
                 });
         },
         fetchSales: function () {
+            this.close_all_table();
+            this.is_sale_table_visiable = true
             axiosObj.get('http://localhost:9900/staff/sale')
                 .then(response => {
                     if (response.data.code === 1000) {
@@ -119,6 +138,8 @@ new Vue({
 
         },
         fetchOrders: function () {
+            this.close_all_table();
+            this.is_order_table_visiable = true
             axiosObj.get('http://localhost:9900/staff/order')
                 .then(response => {
                     if (response.data.code === 1000) {
@@ -132,14 +153,12 @@ new Vue({
                     alert('Failed to fetch orders data: ' + error.message);
                 });
         },
-        acceptOrder: function (orderId) {
-            axiosObj.post('http://localhost:9900/staff/accept', {
-                order_id: orderId
-            })
+        acceptOrder: function (row) {
+            axiosObj.post('http://localhost:9900/staff/accept', {order_id: row.order_id})
                 .then(response => {
                     if (response.data.code === 1000) {
-                        
-                        alert('订单接受成功');
+
+                        this.$message.success("订单接受成功")
 
                         // 如果需要更新订单状态，可以调用 fetchOrders 方法刷新订单列表
                         this.fetchOrders();
